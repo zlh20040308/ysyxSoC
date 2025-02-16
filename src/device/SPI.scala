@@ -64,7 +64,6 @@ class APBSPI(address: Seq[AddressSet])(implicit p: Parameters) extends LazyModul
         s_xpi_send_ctrl_mode        -> Mux(mspi.io.in.pready, s_xpi_send_start_mode, s_xpi_send_ctrl_mode),
         s_xpi_send_start_mode       -> Mux(mspi.io.in.pready, s_xpi_check_mode, s_xpi_send_start_mode),
         s_xpi_check_mode            -> Mux(mspi.io.in.pready && (mspi.io.in.prdata & (1 << 8).U(32.W)) === 0.U, s_xpi_receive_data_mode, s_xpi_check_mode),
-
         s_xpi_receive_data_mode     -> Mux(mspi.io.in.pready, s_xpi_return_data_mode, s_xpi_receive_data_mode),
         s_xpi_return_data_mode      -> s_cancel,
         s_cancel                    -> Mux(mspi.io.in.pready, s_idle, s_cancel),
@@ -93,7 +92,7 @@ class APBSPI(address: Seq[AddressSet])(implicit p: Parameters) extends LazyModul
       List(
         s_idle                     -> false.B,
         s_xpi_mode                 -> false.B,
-        s_normal_mode              -> in.pwrite,
+        s_normal_mode              -> in.penable,
         s_xpi_send_cmd_mode        -> true.B,
         s_xpi_send_ss_mode         -> true.B,
         s_xpi_send_divide_num_mode -> true.B,
@@ -148,7 +147,7 @@ class APBSPI(address: Seq[AddressSet])(implicit p: Parameters) extends LazyModul
       List(
         s_idle                     -> 0x0.U(32.W),
         s_xpi_mode                 -> 0x0.U(32.W),
-        s_normal_mode              -> 0x0.U(32.W),
+        s_normal_mode              -> in.pwdata,
         s_xpi_send_cmd_mode        -> Cat(0x03.U(8.W),in.paddr(23, 0)),
         s_xpi_send_ss_mode         -> 0x1.U(32.W),
         s_xpi_send_divide_num_mode -> 0x1.U(32.W),
