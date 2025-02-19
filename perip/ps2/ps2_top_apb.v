@@ -15,5 +15,6 @@ module ps2_top_apb(
   input         ps2_clk,
   input         ps2_data
 );
+  assign in_pready = 1'd0;
 
 endmodule
