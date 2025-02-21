@@ -11,6 +11,7 @@ module sdram(
   inout [15:0] dq
 );
 
+  
   assign dq = 16'bz;
 
 endmodule
